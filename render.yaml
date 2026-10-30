@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: jarvis-voice-assistant
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    envVars:
+      - key: JARVIS_AI_API_KEY
+        sync: false
+      - key: JARVIS_AI_BASE_URL
+        value: https://api.openai.com/v1
+      - key: JARVIS_AI_MODEL
+        value: gpt-4o-mini
+      - key: JARVIS_COOKIE_SECURE
+        value: "true"

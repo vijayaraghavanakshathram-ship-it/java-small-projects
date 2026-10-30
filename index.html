@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f6fa">
+    <meta name="description" content="Chat with Jarvis using typed messages or optional voice assistance.">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Jarvis — AI Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="auth-screen" id="auth-screen" hidden>
+      <section class="auth-card" aria-labelledby="auth-title">
+        <button class="auth-back" id="auth-back" type="button">← Back to chat</button>
+        <a class="brand auth-brand" href="#" aria-label="Jarvis home">
+          <span class="brand-mark" aria-hidden="true">✳</span>
+          <span>jarvis</span>
+        </a>
+        <p class="eyebrow">YOUR AI SIDEKICK</p>
+        <h1 id="auth-title">Welcome back.</h1>
+        <p class="auth-description" id="auth-description">Sign in to continue to your Jarvis workspace.</p>
+        <form class="auth-form" id="auth-form">
+          <label for="auth-email">Email address</label>
+          <input id="auth-email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required>
+          <label for="auth-password">Password</label>
+          <input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" placeholder="At least 12 characters" required>
+          <p class="auth-error" id="auth-error" role="alert" hidden></p>
+          <button class="auth-submit" id="auth-submit" type="submit">Sign in</button>
+        </form>
+        <p class="auth-switch"><span id="auth-switch-copy">New to Jarvis?</span> <button id="auth-switch" type="button">Create an account</button></p>
+        <p class="auth-note">Creating an account is optional. Your demo chat works without signing in.</p>
+      </section>
+    </main>
+
+    <div class="app-shell" id="app-shell">
+      <aside class="sidebar" aria-label="Chat navigation">
+        <a class="brand" href="#" aria-label="Jarvis home">
+          <span class="brand-mark" aria-hidden="true">✳</span>
+          <span>jarvis</span>
+        </a>
+
+        <button class="new-chat-button" id="new-chat" type="button">
+          <span aria-hidden="true">＋</span>
+          New chat
+          <span class="shortcut">Ctrl / ⌘ K</span>
+        </button>
+
+        <div class="sidebar-label">YOUR SPACE</div>
+        <button class="history-item is-active" type="button" aria-current="page">
+          <span aria-hidden="true">◌</span>
+          <span id="chat-title">A fresh start</span>
+        </button>
+
+        <div class="sidebar-bottom">
+          <div class="profile-avatar" aria-hidden="true">Y</div>
+          <div class="profile-copy">
+            <strong id="profile-email">Guest mode</strong>
+            <span>Personal plan</span>
+          </div>
+          <button class="logout-button" id="logout" type="button" hidden>Sign out</button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="mobile-brand">
+            <span class="brand-mark" aria-hidden="true">✳</span>
+            <span>jarvis</span>
+          </div>
+          <div class="model-picker" aria-label="Chat mode">
+            <span class="status-dot" aria-hidden="true"></span>
+            Jarvis AI
+            <span class="chevron" aria-hidden="true">⌄</span>
+          </div>
+          <div class="topbar-actions">
+            <button class="voice-toggle" id="voice-toggle" type="button" aria-pressed="false">Enable voice</button>
+            <button class="account-button" id="account-button" type="button" hidden>Sign in</button>
+            <button class="share-button" id="about-demo" type="button">
+              <span aria-hidden="true">ⓘ</span>
+              <span>About Jarvis</span>
+            </button>
+          </div>
+        </header>
+
+        <section class="conversation" aria-label="Conversation">
+          <div class="welcome" id="welcome">
+            <div class="welcome-orbit" aria-hidden="true">
+              <span class="orbit-spark">✳</span>
+              <span class="orbit-dot"></span>
+            </div>
+            <p class="eyebrow">YOUR AI SIDEKICK</p>
+            <h1>A little help goes<br> a <span>long way.</span></h1>
+            <p class="welcome-description">Ask a question, explore an idea, or just say hello.<br class="desktop-break"> What would you like to do today?</p>
+
+            <div class="suggestions" aria-label="Suggested prompts">
+              <button class="suggestion" type="button" data-prompt="Give me a creative writing prompt">
+                <span class="suggestion-icon lavender" aria-hidden="true">✎</span>
+                <span><strong>Get creative</strong><small>Give me a writing prompt</small></span>
+                <span class="suggestion-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button class="suggestion" type="button" data-prompt="Help me plan my day">
+                <span class="suggestion-icon peach" aria-hidden="true">◷</span>
+                <span><strong>Plan my day</strong><small>Make a simple daily plan</small></span>
+                <span class="suggestion-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button class="suggestion" type="button" data-prompt="Explain something interesting about space">
+                <span class="suggestion-icon mint" aria-hidden="true">✧</span>
+                <span><strong>Learn something</strong><small>Tell me about space</small></span>
+                <span class="suggestion-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button class="suggestion" type="button" data-prompt="Share a fun fact">
+                <span class="suggestion-icon butter" aria-hidden="true">♡</span>
+                <span><strong>Surprise me</strong><small>Share a fun fact</small></span>
+                <span class="suggestion-arrow" aria-hidden="true">↗</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="messages" id="messages" aria-live="polite" aria-label="Chat messages"></div>
+        </section>
+
+        <footer class="composer-area">
+          <form class="composer" id="chat-form">
+            <label class="sr-only" for="message-input">Message Jarvis</label>
+            <textarea id="message-input" name="message" rows="1" placeholder="Message Jarvis..." maxlength="2000" required></textarea>
+            <div class="composer-toolbar">
+              <span class="demo-hint" id="chat-hint"><span class="hint-spark" aria-hidden="true">✳</span> AI answers are powered by your configured provider</span>
+              <div class="composer-actions">
+                <span class="key-hint">↵</span>
+                <button class="send-button" id="send-button" type="submit" aria-label="Send message" disabled>
+                  <span aria-hidden="true">↑</span>
+                </button>
+              </div>
+            </div>
+          </form>
+          <p class="disclaimer">Jarvis can make mistakes. Voice recognition and speech depend on your browser and device.</p>
+        </footer>
+      </main>
+    </div>
+    <div class="login-prompt" id="login-prompt" role="dialog" aria-modal="true" aria-labelledby="login-prompt-title" aria-describedby="login-prompt-description" hidden>
+      <section class="login-prompt-card">
+        <button class="prompt-close" id="prompt-close" type="button" aria-label="Close sign-in prompt">×</button>
+        <div class="prompt-icon" aria-hidden="true">✳</div>
+        <p class="eyebrow">KEEP YOUR JARVIS HANDY</p>
+        <h2 id="login-prompt-title">Want to make it yours?</h2>
+        <p id="login-prompt-description">Create an account or sign in. It's completely optional—you can keep chatting as a guest.</p>
+        <button class="auth-submit" id="prompt-sign-in" type="button">Sign in or create account</button>
+        <button class="prompt-continue" id="prompt-continue" type="button">Continue without an account</button>
+      </section>
+    </div>
+    <div class="login-prompt voice-optin" id="voice-optin" role="dialog" aria-modal="true" aria-labelledby="voice-optin-title" aria-describedby="voice-optin-description">
+      <section class="login-prompt-card">
+        <div class="prompt-icon" aria-hidden="true">♩</div>
+        <p class="eyebrow">OPTIONAL VOICE CONTROL</p>
+        <h2 id="voice-optin-title">Enable voice assistance?</h2>
+        <p id="voice-optin-description">Allow microphone access to say “Hey Jarvis” and ask questions aloud. Your browser handles speech recognition; your questions are sent to the configured AI provider. You can turn listening off any time.</p>
+        <button class="auth-submit" id="voice-enable" type="button">Enable voice assistance</button>
+        <button class="prompt-continue" id="voice-skip" type="button">Not now</button>
+      </section>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
